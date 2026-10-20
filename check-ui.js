@@ -1,0 +1,53 @@
+'use strict';
+// Run in cua_repl with the existing preview tab; all UI control stays in CUA.
+// const qa = await import('file:///Y:/AI/app/dice-advisor/check-ui.js');
+// await qa.default(tab);
+export default async function runChecks(tab){
+  let passed=0;const pw=tab.playwright;
+  const role=(type,name)=>pw.getByRole(type,{name,exact:true});
+  const check=(value,label)=>{if(!value)throw Error('FAIL '+label);passed++;};
+  const submit=()=>role('button','给我建议').click();
+  await tab.reload();
+  check((await role('combobox','第1颗骰子').getAttribute('id'))==='die0','手牌输入存在');
+  await submit();check((await role('alert').innerText()).includes('先选完'),'空手牌不能生成建议');
+  await role('button','先试一手示例').click();
+  check(await role('heading','一轮建议：继续叫 6个5，飞').isVisible(),'示例推荐');
+  await role('combobox','当前阶段').selectOption('opening');
+  check(await role('status').isVisible(),'切阶段旧建议失效');
+  await submit();check(await role('heading','模型推荐首叫：6个3，飞').isVisible(),'庄家免填首叫');
+  await role('button','检查首叫').first().click();
+  check(await role('heading','正在检查的首叫：6个3，飞').isVisible(),'检查候选首叫');
+  await role('combobox','叫法类型').selectOption('zhai');
+  await submit();check((await role('alert').innerText()).includes('必须为飞'),'拒绝非法显式斋');
+  await role('button','先试一手示例').click();
+  await role('spinbutton','总人数（含自己）').fill('2');
+  for(let i=1;i<=5;i++)await role('combobox','第'+i+'颗骰子').selectOption('1');
+  await role('spinbutton','上家叫的数量').fill('8');
+  await role('combobox','目标点数').selectOption('6');
+  await submit();check(await role('heading','一轮建议：普通开上家').isVisible(),'少杯目标');
+  await role('combobox','这次优先考虑').selectOption('win');
+  await submit();check(await role('heading','一轮建议：继续叫 9个2，飞').isVisible(),'少输目标');
+  await role('button','先试一手示例').click();
+  await role('combobox','当前阶段').selectOption('defend');
+  await role('spinbutton','我刚叫的数量').fill('999');
+  await role('combobox','目标点数').selectOption('3');
+  // Advanced panel starts closed on a fresh load.
+  await pw.getByText('更多选项与房规',{exact:true}).click();
+  await role('checkbox','允许被批时直接认输半杯').check();
+  await submit();check(await role('heading','按平均少喝：直接认输半杯').isVisible(),'认输少杯');
+  await role('combobox','这次优先考虑').selectOption('win');
+  await submit();check(await role('heading','建议接受批，直接开盅').isVisible(),'认输不能提高不喝概率');
+  await role('button','先试一手示例').click();
+  await role('combobox','假设上家手里，能给他这句叫法贡献至少几个？').selectOption('3');
+  await submit();check(await pw.getByText('当前使用假设：上家对原叫法至少贡献3个。',{exact:true}).isVisible(),'条件线索明确披露');
+  await role('combobox','推荐列表筛选').selectOption('zhai');
+  await submit();check(await pw.getByText('这个筛选下没有合法叫法。已进入飞，不能退斋。',{exact:true}).isVisible(),'无斋提示且保留主建议');
+  await role('button','先试一手示例').click();
+  for(let i=1;i<=5;i++)await role('combobox','第'+i+'颗骰子').selectOption(String(i));
+  await submit();check((await role('alert').innerText()).includes('重摇'),'顺子拒绝');
+  await role('button','先试一手示例').click();
+  const dimensions=await pw.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+  check(dimensions.scroll<=dimensions.width,'当前窄屏无横向溢出');
+  return {passed,viewport:dimensions.width};
+};
+

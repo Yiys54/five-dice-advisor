@@ -1,15 +1,28 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>五骰子 · 房规概率判断器</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="按自定义五骰子房规，精确计算叫法概率、少喝与少输的一轮建议；可完全离线使用。"><title>五骰子判断器 · 新手版 v1.2</title>
 <style>
-:root{color-scheme:light dark;--bg:#f5f3ec;--surface:#fffefa;--ink:#203831;--muted:#596b63;--border:#cbd4c9;--accent:#246d53;--soft:#e5eee5;--error:#a02f29}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1000px;margin:auto;padding:28px 20px 60px}h1{font-size:30px;line-height:1.25;margin:8px 0}h2{font-size:20px;margin:22px 0 12px}.eyebrow{font-size:13px;letter-spacing:.14em;color:var(--accent)}p{margin:8px 0 14px}.muted,small{color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;font-size:14px}input,select,button{font:inherit;border:1px solid var(--border);border-radius:9px;padding:10px 12px;max-width:100%;background:var(--surface);color:var(--ink)}input,select{width:100%;margin-top:5px}button{cursor:pointer;background:var(--accent);color:#fff;border-color:var(--accent);min-height:44px}.dice{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.dice select{text-align:center;font-size:22px;padding:7px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{padding:14px;background:var(--soft);border-radius:10px}.value{display:block;font-size:26px;font-variant-numeric:tabular-nums}.decision{border-left:4px solid var(--accent);padding:8px 14px;background:var(--soft)}.error{color:var(--error)}table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--border)}th{color:var(--muted);font-weight:500}summary{cursor:pointer}a{color:var(--accent)}.check{display:flex;gap:8px;align-items:center}.check input{width:auto;margin:0}.tag{display:inline-block;font-size:12px;padding:2px 7px;border-radius:6px;background:var(--soft)}#error:empty{display:none}.bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin:8px 0}.bar span{display:block;height:100%;background:var(--accent)}footer{font-size:13px;margin-top:24px}.table-wrap{overflow-x:auto}@media(max-width:620px){main{padding:20px 14px 40px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.stat{display:flex;justify-content:space-between;align-items:center}.value{font-size:23px}.panel{padding:16px}h1{font-size:26px}}@media(prefers-color-scheme:dark){:root{--bg:#131d18;--surface:#1b2821;--ink:#e6eee5;--muted:#b4c5b8;--border:#455b4b;--accent:#6dbd94;--soft:#293f31;--error:#ffb5a7}button{color:#12291c}}
+:root{color-scheme:light dark;--bg:#f5f3ec;--surface:#fffefa;--ink:#203831;--muted:#596b63;--border:#cbd4c9;--accent:#246d53;--soft:#e5eee5;--error:#a02f29;--warn:#795d20}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif}main{max-width:1000px;margin:auto;padding:28px 20px 60px}h1{font-size:30px;line-height:1.25;margin:8px 0}h2{font-size:21px;margin:18px 0 12px}h3{font-size:17px;margin:16px 0 8px}.eyebrow{font-size:13px;color:var(--accent)}p{margin:8px 0 14px}.muted,small{color:var(--muted)}.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;font-size:14px}input,select,button{font:inherit;border:1px solid var(--border);border-radius:9px;padding:10px 12px;max-width:100%;background:var(--surface);color:var(--ink)}input,select{width:100%;margin-top:5px}button{cursor:pointer;background:var(--accent);color:#fff;border-color:var(--accent);min-height:44px}.secondary{color:var(--accent);background:var(--surface)}button:hover{filter:brightness(.95)}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}.dice{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.dice select{text-align:center;font-size:22px;padding:7px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{padding:14px;background:var(--soft);border-radius:10px}.value{display:block;font-size:25px;font-variant-numeric:tabular-nums}.decision{border-left:5px solid var(--accent);padding:16px;background:var(--soft);border-radius:6px}.decision h2{margin:4px 0 10px;font-size:25px}.error{color:var(--error)}.notice{padding:12px;border:1px solid var(--border);border-radius:9px;color:var(--warn);background:var(--surface)}table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:10px 6px;border-bottom:1px solid var(--border)}th{color:var(--muted);font-weight:500}summary{cursor:pointer;font-weight:600}a{color:var(--accent)}.check{display:flex;gap:8px;align-items:center}.check input{width:auto;margin:0}.tag{display:inline-block;font-size:12px;padding:2px 7px;border-radius:6px;background:var(--soft)}#error:empty{display:none}footer{font-size:13px;margin-top:24px}.table-wrap{overflow-x:auto}details{margin:14px 0}ol,ul{padding-left:23px}.step{font-weight:650;font-size:18px;margin-bottom:10px}.spaced{margin-top:18px}[hidden]{display:none!important}@media(max-width:620px){main{padding:20px 14px 40px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}.stat{display:flex;justify-content:space-between;align-items:center;gap:10px}.value{font-size:22px}.panel{padding:16px}h1{font-size:27px}.decision h2{font-size:22px}.dice{gap:6px}.dice select{padding:8px 2px}}@media(prefers-color-scheme:dark){:root{--bg:#131d18;--surface:#1b2821;--ink:#e6eee5;--muted:#b4c5b8;--border:#455b4b;--accent:#6dbd94;--soft:#293f31;--error:#ffb5a7;--warn:#efd49b}button{color:#12291c}.secondary{color:var(--accent)}}
 </style></head><body><main>
-<div class="eyebrow">五骰子 / 精确枚举 / v1.1 庄家首叫与斋飞选择</div><h1>把这一手，算清楚。</h1><p class="muted">输入自己的五颗骰子，计算叫法真假和罚杯风险。无需账号、模型或联网。</p>
-<form id="form" class="panel"><div class="grid"><div><label>我的五颗骰子</label><div class="dice" id="dice"></div></div><label>总人数（含自己）<input id="players" type="number" min="2" max="20" value="4" required></label><label>当前阶段<select id="phase"><option value="respond">轮到我：接上家的叫法</option><option value="opening">我是庄家：首次叫牌</option><option value="defend">我刚叫牌：现在被批</option></select></label><label>叫法类型<select id="bid-mode"><option value="auto">自动按房规判断</option><option value="zhai">斋 · 只数真实目标点数</option><option value="fly">飞 · 1可作万能</option></select></label><div id="bid-fields"><div class="grid"><label><span id="bid-label">上家数量</span><input id="quantity" type="number" min="1" max="999" value="6" required></label><label>目标点数<select id="face"></select></label></div></div><label>推荐叫法显示<select id="recommend-mode"><option value="all">全部：斋和飞</option><option value="zhai">只看可叫的斋</option><option value="fly">只看可叫的飞</option></select></label></div><p id="mode-hint" class="muted" aria-live="polite"></p>
-<details style="margin-top:16px"><summary>房规与计算假设</summary><div class="grid" style="margin-top:12px"><label>顺子重摇<select id="straight"><option value="distinct">任意五颗互不相同：整手重摇直到有效</option><option value="consecutive">仅12345 / 23456重摇</option><option value="none">不启用重摇</option></select></label><label>继续叫的评估方式<select id="scenario"><option value="probability">只列概率，不冒充完整策略</option><option value="immediate">情景假设：下家一定立即普通开我</option></select></label><label class="check"><input id="bonus" type="checkbox" checked>启用花豹6、纯豹7、围1飞7斋5</label><label class="check"><input id="surrender" type="checkbox">允许被批时认输，只罚半杯</label></div><p><small>已确认：斋≥人数+1；非1点数数量≥6自动飞；斋和飞均可同数量加点数；1＜2＜3＜4＜5＜6；叫1恒斋，飞后不可再叫1。加成仅用于飞；结算自动生效。批先留反批选择，再统一开盅。</small></p></details>
-<p><small>假设骰子公平、各玩家独立摇骰。概率只利用你的手牌，未根据对手叫牌历史或心理策略更新。</small></p><button type="submit">计算这一手</button><p id="error" class="error" role="alert"></p></form>
-<div id="results" aria-live="polite"></div>
-<section class="panel"><h2>怎么看“少喝”？</h2><p>“喝的概率”与“平均罚杯数”分开显示。开半杯、批一杯、反批两杯；不计对手罚杯收益，不计顺子连摇罚杯。继续叫可能改变后续对手行为，只有明确情景假设时才给条件推荐。</p><details><summary>精确算法与边界</summary><p>每位未知玩家枚举6⁵=7776种有序手牌，剔除需重摇的结果；默认保留7056种。逐手计算真实有效点数与豹子加成，再按玩家卷积。展示概率为精确计数比的四舍五入；不使用随机模拟。</p><p>豹子是整手事件，顺子重摇使同一手内骰子相关，所以不能直接使用“未知骰子颗数×1/6或1/3”的普通二项模型。所有人数都按每人五颗计算。多于四人时，非1点数已经没有合法的小于6的斋叫法。</p><p>本页没有全局最优博弈策略、对手读心或胜率保证。100%只代表当前公平骰先验下的数学确定性，不代表对手行动确定。</p></details></section>
-<footer>开源参考：<a href="https://github.com/HighDiceRoller/icepool" target="_blank" rel="noopener">Icepool</a> · <a href="https://github.com/davidvoncos-bit/Liar-s-dice" target="_blank" rel="noopener">Liar-s-dice</a>。本判断器为按你的房规独立实现，没有加载第三方脚本。</footer>
+<div class="eyebrow">五骰子 · v1.2 新手版 · 精确整手枚举</div>
+<h1>先看手牌，再决定怎么叫。</h1><p class="muted">填好五颗骰子，直接看能说出口的叫法和风险。计算在你的设备上完成，加载后可断网使用。</p>
+<details class="panel"><summary>第一次用？30秒看懂</summary><ol><li>填<strong>总人数</strong>和自己的<strong>五颗最终骰子</strong>。任意五颗互不相同，先重摇。</li><li>选阶段：庄家首叫、接上家，或自己被批。后两种再填当前叫法。</li><li>选“平均少喝”或“本次少输”，点<strong>给我建议</strong>。推荐口令可直接照着叫。</li></ol><p>飞：1能替目标点；斋：只算真实目标点。4人局非1点数只有5个能叫斋，6个起自动飞；叫1永远为斋。</p><p><strong>成立概率不等于整局胜率。</strong>建议比较下家立刻开或批的这一轮；下家继续叫时，要在你下一次轮到时重新计算。</p></details>
+<form id="form" class="panel" novalidate>
+<div class="step">① 填人数和你的骰子</div>
+<div class="grid"><label>总人数（含自己）<input id="players" type="number" min="2" max="20" value="4" required></label><div><label>我的五颗骰子（摇完后）</label><div class="dice" id="dice"></div></div></div>
+<div class="step spaced">② 现在轮到哪一步？</div>
+<div class="grid"><label>当前阶段<select id="phase"><option value="respond">上家叫完，轮到我</option><option value="opening">我是庄家，还没人叫</option><option value="defend">我刚叫完，现在被批</option></select></label><label>这次优先考虑<select id="objective"><option value="cups">平均少喝：尽量减少罚杯</option><option value="win">本次少输：提高开盅时不输的概率</option></select></label></div>
+<details id="opening-check" hidden><summary>我想检查另一种首叫（可选）</summary><p class="muted">不填也能得到推荐首叫；填了会额外计算你选的叫法。</p></details>
+<div id="bid-fields" class="spaced"><div class="grid"><label><span id="bid-label">上家叫的数量</span><input id="quantity" type="number" min="1" max="999" placeholder="例如：6"></label><label>目标点数<select id="face"><option value="">请选择</option></select></label><label>叫法类型<select id="bid-mode"><option value="auto">自动按房规判断（推荐）</option><option value="zhai">斋 · 只算真实目标点</option><option value="fly">飞 · 1可作万能</option></select></label></div><p id="mode-hint" class="muted"></p></div>
+<details id="advanced"><summary>更多选项与房规</summary><div class="grid spaced"><label>推荐列表筛选<select id="recommend-mode"><option value="all">全部合法叫法</option><option value="zhai">只看斋</option><option value="fly">只看飞</option></select></label><label>顺子重摇<select id="straight"><option value="distinct">任意五颗互不相同，整手重摇至有效</option><option value="consecutive">仅12345 / 23456重摇</option><option value="none">不启用重摇</option></select></label><label class="check"><input id="bonus" type="checkbox" checked>花豹6、纯豹7、围1飞7斋5</label><label class="check"><input id="surrender" type="checkbox">允许被批时直接认输半杯</label></div>
+<div id="signal-fields"><h3>可选：用一个明确假设测试上家的叫牌线索</h3><label>假设上家手里，能给他这句叫法贡献至少几个？<select id="signal-min"><option value="0">不作假设（默认，只有自己的手牌）</option><option value="1">至少1个有效贡献</option><option value="2">至少2个有效贡献</option><option value="3">至少3个有效贡献</option><option value="4">至少4个有效贡献</option><option value="5">至少5个有效贡献</option><option value="6">至少6个有效贡献（需要飞的豹子加成）</option><option value="7">至少7个有效贡献（需要飞的豹子加成）</option></select></label><p><small>这是你对上家的<strong>假设，不能从一句叫牌自动推断</strong>。新手建议保持关闭。开启后，只对该上家筛选手牌，所有推荐按同一假设重算；仍不包含完整叫牌历史与心理策略。</small></p></div>
+<p><small>已确认房规：斋≥人数+1，庄家也遵守；非1点数≥6强制飞；同数量可以加点数；1＜2＜3＜4＜5＜6；叫1恒斋，进入飞后不能再叫1。豹子加成只用于飞，结算自动计入。开半杯、批1杯、反批2杯。</small></p></details>
+<p id="example-note" class="notice" hidden>当前是示例手牌，不是你的真实手牌；使用前请改成自己的骰子。</p>
+<div class="row spaced"><button type="submit">给我建议</button><button type="button" id="example" class="secondary">先试一手示例</button><button type="button" id="new-hand" class="secondary">下一局：重填骰子</button></div><p id="error" class="error" role="alert"></p>
+</form>
+<div id="stale" class="notice" hidden role="status">输入已改变，旧建议已收起。请点“给我建议”重新计算。</div>
+<div id="results" aria-live="polite"><section class="panel muted">还没有计算。请先输入你的五颗骰子，或点“先试一手示例”。</section></div>
+<section class="panel"><h2>怎么用它减少判断失误？</h2><ul><li><strong>先确认“谁叫的”。</strong>你开上家，上家成立时你输；别人开你，你的叫法不成立时你输。</li><li><strong>看全场，不只看自己。</strong>飞要算其他人的目标点和1；豹子与顺子重摇会改变分布。</li><li><strong>不用反批来“增加胜率”。</strong>相同开盅结果下，反批不改变输赢，只会改变罚杯。</li><li><strong>轮到自己再更新。</strong>看到对手新叫法后重新填，不要沿用上一轮建议。</li></ul><details><summary>模型算了什么？哪些事情还不知道？</summary><p>每位未知玩家枚举7776种有序手牌，默认剔除720种应重摇结果，保留7056种。逐手计算飞、斋与整手豹子加成，再按玩家做整数卷积。极小风险也保留，不会因小数舍入把它说成确定事件。</p><p>基础概率假设骰子公平、不同玩家独立，只知道你的手牌。可选线索模型对指定上家的手牌按假设筛选，再重新卷积。叫牌行为通常有信息；未建立对手策略模型时，这些数值不能当成观察全部叫牌后的真实胜率。</p><p><strong>一轮建议的边界：</strong>比较现在普通开，以及继续叫后下家立即普通开或批、你接受批的情况。“平均少喝”对后者取两种罚杯中较大的那个；“本次少输”比较本次结算的输局概率。若下家继续加叫，完整后续未计入。认输半杯仅在被批阶段单独比较。没有未经测试的整局胜率提升承诺。</p><p>不计算对手喝酒带来的收益、心理威慑、连续顺子额外罚杯；不自动猜对手的手牌。不需要AI模型或上传聊天信息。</p></details></section>
+<footer>可离线使用 · <a href="https://yiys54.github.io/five-dice-advisor/" rel="noopener">固定新网址：yiys54.github.io</a> · 数学规则 v1.2</footer>
 </main><script>(function(root){
   'use strict';
   const defaults={straight:'distinct',bonus:true,onesAfterFly:false};
@@ -21,47 +34,153 @@
   function score(h,face,fly,bonus=true){const c=Array(7).fill(0);for(const d of h)c[d]++;if(face===1||!fly)return c[face];if(bonus){if(c[1]===5||c[face]===5)return 7;if(c[face]===4&&c[1]===1)return 6;}return c[face]+c[1];}
   function validBid(b,n){return !!b&&Number.isInteger(b.quantity)&&b.quantity>=1&&b.quantity<=999&&Number.isInteger(b.face)&&b.face>=1&&b.face<=6&&(!b.declaredMode||b.declaredMode==='auto'||b.declaredMode===mode(b))&&(mode(b)==='fly'||b.quantity>=n+1);}
   function legal(prev,next,n,r={}){r=rules(r);if(!validBid(next,n))return false;if(!prev)return true;if(!validBid(prev,n))return false;if(mode(prev)==='fly'&&mode(next)==='zhai'&&!(r.onesAfterFly&&next.face===1&&next.quantity>prev.quantity))return false;return next.quantity>prev.quantity||next.quantity===prev.quantity&&next.face>prev.face;}
-  function oneDistribution(face,fly,opts={}){const r=rules(opts),key=JSON.stringify([face,fly,r.bonus,r.straight]);if(cache.has(key))return cache.get(key);const counts=Array(8).fill(0n);let accepted=0n;for(let code=0;code<7776;code++){let v=code;const h=[];for(let i=0;i<5;i++){h.push(v%6+1);v=Math.floor(v/6);}if(rejected(h,r))continue;counts[score(h,face,fly,r.bonus)]++;accepted++;}const out={counts,accepted};cache.set(key,out);return out;}
+  function oneDistribution(face,fly,opts={},signal=null){const r=rules(opts),key=JSON.stringify([face,fly,r.bonus,r.straight,signal]);if(cache.has(key))return cache.get(key);const counts=Array(8).fill(0n);let accepted=0n;for(let code=0;code<7776;code++){let v=code;const h=[];for(let i=0;i<5;i++){h.push(v%6+1);v=Math.floor(v/6);}if(rejected(h,r))continue;if(signal&&score(h,signal.face,signal.fly,r.bonus)<signal.min)continue;counts[score(h,face,fly,r.bonus)]++;accepted++;}const out={counts,accepted};cache.set(key,out);return out;}
   function convolve(a,b){const c=Array(a.length+b.length-1).fill(0n);for(let i=0;i<a.length;i++)if(a[i])for(let j=0;j<b.length;j++)if(b[j])c[i+j]+=a[i]*b[j];return c;}
-  function unknownDistribution(n,face,fly,r={}){const one=oneDistribution(face,fly,r);const key='multi'+JSON.stringify([n,face,fly,rules(r)]);if(cache.has(key))return cache.get(key);let counts=[1n];for(let i=0;i<n;i++)counts=convolve(counts,one.counts);const out={counts,denominator:one.accepted**BigInt(n),accepted:one.accepted};cache.set(key,out);return out;}
+  function unknownDistribution(n,face,fly,r={},signal=null){const one=oneDistribution(face,fly,r);const key='multi'+JSON.stringify([n,face,fly,rules(r),signal]);if(cache.has(key))return cache.get(key);let counts=[1n];for(let i=0;i<n-(signal?1:0);i++)counts=convolve(counts,one.counts);let conditioned=null;if(signal){if(n<1||!Number.isInteger(signal.face)||signal.face<1||signal.face>6||typeof signal.fly!=='boolean'||!Number.isInteger(signal.min)||signal.min<0||signal.min>7)throw Error('上家线索参数不合法。');conditioned=oneDistribution(face,fly,r,signal);if(conditioned.accepted===0n)throw Error('这个上家贡献假设不可能成立，请降低数量或关闭线索。');counts=convolve(counts,conditioned.counts);}const out={counts,denominator:one.accepted**BigInt(n-(signal?1:0))*(conditioned?conditioned.accepted:1n),accepted:one.accepted,conditionedAccepted:conditioned?conditioned.accepted:null};cache.set(key,out);return out;}
   function gcd(a,b){while(b){const c=a%b;a=b;b=c;}return a;}
-  function analyze(h,n,b,r={}){hand(h);r=rules(r);if(!Number.isInteger(n)||n<2||n>20)throw Error('人数须为2–20。');if(rejected(h,r))throw Error('这手是需重摇的顺子。请输入重摇后最终手牌，或修改顺子规则。');if(b&&b.declaredMode&&b.declaredMode!=='auto'&&b.declaredMode!==mode(b))throw Error(b.face===1?'叫1始终为斋，不能选择飞。':b.quantity>=6?'非1点数数量≥6必须为飞，不能选择斋。':'非1点数数量小于6属于斋，不能选择飞。');if(!validBid(b,n))throw Error('叫法不合法：本局斋至少'+(n+1)+'个；非1点数飞从6起，叫1始终为斋。');const fly=mode(b)==='fly',own=score(h,b.face,fly,r.bonus),dist=unknownDistribution(n-1,b.face,fly,r);let numerator=0n;for(let i=Math.max(0,b.quantity-own);i<dist.counts.length;i++)numerator+=dist.counts[i];const g=gcd(numerator,dist.denominator),p=Number(numerator)/Number(dist.denominator);return {bid:b,mode:mode(b),own,pTrue:p,pFalse:1-p,numerator:numerator/g,denominator:dist.denominator/g,rawDenominator:dist.denominator,accepted:dist.accepted,openLoss:.5*p,piLoss:p,acceptPiLoss:1-p,counterLoss:2*(1-p)};}
-  function raises(h,n,prev,r={}){const out=[],start=prev?prev.quantity:1,end=Math.max(7*n+1,start+1);for(let q=start;q<=end;q++)for(let f=1;f<=6;f++){const b={quantity:q,face:f};if(legal(prev,b,n,r)){const a=analyze(h,n,b,r);a.immediateOpenLoss=.5*a.pFalse;out.push(a);}}return out.sort((a,b)=>a.immediateOpenLoss-b.immediateOpenLoss||a.bid.quantity-b.bid.quantity||a.bid.face-b.bid.face);}
-  const api={defaults,hand,rejected,mode,score,validBid,legal,oneDistribution,convolve,unknownDistribution,analyze,raises};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.DiceAdvisor=api;
+  function analyze(h,n,b,r={},signal=null){hand(h);r=rules(r);if(!Number.isInteger(n)||n<2||n>20)throw Error('人数须为2–20。');if(rejected(h,r))throw Error('这手是需重摇的顺子。请输入重摇后最终手牌，或修改顺子规则。');if(b&&b.declaredMode&&b.declaredMode!=='auto'&&b.declaredMode!==mode(b))throw Error(b.face===1?'叫1始终为斋，不能选择飞。':b.quantity>=6?'非1点数数量≥6必须为飞，不能选择斋。':'非1点数数量小于6属于斋，不能选择飞。');if(!validBid(b,n))throw Error('叫法不合法：本局斋至少'+(n+1)+'个；非1点数飞从6起，叫1始终为斋。');const fly=mode(b)==='fly',own=score(h,b.face,fly,r.bonus),dist=unknownDistribution(n-1,b.face,fly,r,signal);let numerator=0n;for(let i=Math.max(0,b.quantity-own);i<dist.counts.length;i++)numerator+=dist.counts[i];const falseNumerator=dist.denominator-numerator,g=gcd(numerator,dist.denominator),p=Number(numerator)/Number(dist.denominator),f=Number(falseNumerator)/Number(dist.denominator);let sum=0n,cumulative=0n,low=null,high=null;for(let i=0;i<dist.counts.length;i++){sum+=BigInt(i+own)*dist.counts[i];cumulative+=dist.counts[i];if(low===null&&cumulative*20n>=dist.denominator)low=i+own;if(high===null&&cumulative*20n>=dist.denominator*19n)high=i+own;}return {bid:b,mode:mode(b),own,pTrue:p,pFalse:f,numerator:numerator/g,denominator:dist.denominator/g,trueCount:numerator,falseCount:falseNumerator,rawDenominator:dist.denominator,certainTrue:falseNumerator===0n,certainFalse:numerator===0n,accepted:dist.accepted,conditionedAccepted:dist.conditionedAccepted,mean:Number(sum)/Number(dist.denominator),interval:[low,high],openLoss:.5*p,piLoss:p,acceptPiLoss:f,counterLoss:2*f,immediateOpenLoss:.5*f};}
+  function fractionCompare(an,ad,bn,bd){const d=an*bd-bn*ad;return d<0n?-1:d>0n?1:0;}
+  function raises(h,n,prev,r={},signal=null){const out=[],start=prev?prev.quantity:1,end=Math.max(7*n+1,start+1);for(let q=start;q<=end;q++)for(let f=1;f<=6;f++){const b={quantity:q,face:f};if(legal(prev,b,n,r))out.push(analyze(h,n,b,r,signal));}return out.sort((a,b)=>fractionCompare(a.falseCount,a.rawDenominator,b.falseCount,b.rawDenominator)||a.bid.quantity-b.bid.quantity||a.bid.face-b.bid.face);}
+  // This is an explicitly bounded, immediate-reveal comparison, not a full-game policy.
+  function decide(phase,current,best,objective='cups',surrender=false){
+    if(!['cups','win'].includes(objective))throw Error('决策目标不合法。');
+    if(phase==='opening')return {action:best?'raise':'none',best};
+    if(phase==='defend'){const cmp=objective==='cups'&&surrender?fractionCompare(current.falseCount,current.rawDenominator,1n,2n):-1;return {action:cmp>0?'surrender':'accept',tie:cmp===0};}
+    if(phase!=='respond')throw Error('阶段不合法。');
+    if(!best)return {action:'open'};
+    // Next opponent either opens for half a cup or calls pi; accept pi.
+    // Worst immediate cup loss is P(new bid false); drinking risk is the same in both.
+    const cmp=fractionCompare(best.falseCount,best.rawDenominator,current.trueCount,current.rawDenominator*(objective==='cups'?2n:1n));
+    return {action:cmp<0?'raise':'open',tie:cmp===0,best};
+  }
+  const api={defaults,hand,rejected,mode,score,validBid,legal,oneDistribution,convolve,unknownDistribution,analyze,raises,fractionCompare,decide};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.DiceAdvisor=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
-</script><script>
-'use strict';
-const $=id=>document.getElementById(id),E=DiceAdvisor,pct=x=>(100*x).toFixed(2)+'%',cups=x=>x.toFixed(4)+'杯',fmt=a=>a.bid.quantity+'个'+a.bid.face+' · '+(a.mode==='fly'?'飞':'斋');
-for(let i=0;i<5;i++){const s=document.createElement('select');s.id='die'+i;s.setAttribute('aria-label','第'+(i+1)+'颗骰子');for(let f=1;f<=6;f++)s.add(new Option(String(f),String(f)));s.value=String([1,3,3,5,6][i]);$('dice').appendChild(s);}for(let f=1;f<=6;f++)$('face').add(new Option(String(f),String(f)));$('face').value='3';
-const getRules=()=>({straight:$('straight').value,bonus:$('bonus').checked});
-function modeHint(){const n=Number($('players').value),face=Number($('face').value),q=Number($('quantity').value);$('mode-hint').textContent=(face===1?'叫1恒斋，至少'+(n+1)+'个。':n<=4?'本局非1点数：斋可叫'+(n+1)+'–5个；飞从6个起。':'本局非1点数没有合法的斋；飞从6个起。叫1的斋至少'+(n+1)+'个。')+' 当前数量与点数按房规属于'+(E.mode({quantity:q,face})==='fly'?'飞。':'斋。');}
-function stage(){const phase=$('phase').value;$('bid-fields').hidden=false;$('quantity').required=true;$('bid-label').textContent=phase==='opening'?'我准备首叫的数量':phase==='defend'?'我刚叫的数量':'上家数量';modeHint();}
-$('phase').addEventListener('change',stage);for(const id of ['players','quantity','face','bid-mode'])$(id).addEventListener('input',modeHint);
-function compute(){
- $('error').textContent='';$('results').innerHTML='';try{
- const h=Array.from({length:5},(_,i)=>Number($('die'+i).value)),n=Number($('players').value),r=getRules(),phase=$('phase').value,b={quantity:Number($('quantity').value),face:Number($('face').value),declaredMode:$('bid-mode').value};
- E.hand(h);if(!Number.isInteger(n)||n<2||n>20)throw Error('人数须为2–20。');if(E.rejected(h,r))throw Error('你的手牌是应当重摇的顺子，请输入最终有效手牌。');
- const section=document.createElement('section');section.className='panel';let a=null,html='';
- a=E.analyze(h,n,b,r);html+='<h2>'+(phase==='opening'?'我准备首叫：':'')+fmt(a)+'</h2><div class="stats"><div class="stat">叫法成立概率<strong class="value">'+pct(a.pTrue)+'</strong></div><div class="stat">叫法不成立概率<strong class="value">'+pct(a.pFalse)+'</strong></div><div class="stat">我的有效贡献<strong class="value">'+a.own+'个</strong></div></div><div class="bar" aria-label="成立概率"><span style="width:'+a.pTrue*100+'%"></span></div><details><summary>精确计数</summary><p style="overflow-wrap:anywhere">P(成立) = '+a.numerator+' / '+a.denominator+'；每位未知玩家有 '+a.accepted+' 种有效等可能手牌。</p></details>';
- if(phase==='opening'){
- html+='<h2>这次首叫被立即质疑时</h2><div class="table-wrap"><table><thead><tr><th>下家的动作</th><th>我喝的概率</th><th>我平均罚杯</th></tr></thead><tbody><tr><td>普通开我 · 半杯</td><td>'+pct(a.pFalse)+'</td><td>'+cups(.5*a.pFalse)+'</td></tr><tr><td>批我，我接受 · 一杯</td><td>'+pct(a.pFalse)+'</td><td>'+cups(a.pFalse)+'</td></tr></tbody></table></div><p><small>首叫尚未进入后续回合。以上是被立即质疑的条件风险，不是整局最终罚杯。</small></p>';
- }
- if(phase==='respond'){
- html+='<h2>现在质疑：直接结束本局</h2><div class="table-wrap"><table><thead><tr><th>动作</th><th>自己喝的概率</th><th>自己平均罚杯</th></tr></thead><tbody><tr><td>开 · 半杯</td><td>'+pct(a.pTrue)+'</td><td>'+cups(a.openLoss)+'</td></tr><tr><td>批 · 不反批时一杯</td><td>'+pct(a.pTrue)+'</td><td>'+cups(a.piLoss)+'</td></tr></tbody></table></div><p><small>若上家反批，你输时改罚两杯；“批”的总期望罚杯在 '+cups(a.piLoss)+'–'+cups(2*a.piLoss)+' 之间。只求自己少喝，普通开不劣于批，p=0时打平。</small></p>';
- }else if(phase==='defend'){
- const allow=$('surrender').checked;const best=allow&&a.acceptPiLoss>.5?'认输半杯':'接受批，直接开盅';html+='<h2>我被批：应对风险</h2><div class="table-wrap"><table><thead><tr><th>动作</th><th>自己喝的概率</th><th>自己平均罚杯</th></tr></thead><tbody><tr><td>接受批 · 一杯</td><td>'+pct(a.pFalse)+'</td><td>'+cups(a.acceptPiLoss)+'</td></tr><tr><td>反批 · 两杯</td><td>'+pct(a.pFalse)+'</td><td>'+cups(a.counterLoss)+'</td></tr>'+(allow?'<tr><td>直接认输 · 半杯</td><td>100%</td><td>0.5000杯</td></tr>':'')+'</tbody></table></div><p class="decision">按平均罚杯最少：'+best+'。只比较喝的概率：接受批与反批相同。反批不会让叫法更容易成立。</p>';
- }
- if(phase!=='defend'){
- const filter=$('recommend-mode').value,choices=E.raises(h,n,phase==='opening'?null:b,r).filter(x=>filter==='all'||x.mode===filter),top=choices.slice(0,8),best=top[0];html+='<h2>合法叫法 · '+(filter==='zhai'?'只看斋':filter==='fly'?'只看飞':'斋和飞')+' · 最多8项</h2><p><small>同概率优先较低数量、较低点数。列表按“新叫被立即普通开”的平均罚杯升序排列；这不是未知后续行为下的完整胜率。</small></p>';
- if(best){
- if($('scenario').value==='immediate'){
- const favor=phase==='opening'||best.immediateOpenLoss<a.openLoss;html+='<p class="decision">仅在“下家必定立即普通开我”假设下：'+(favor?'建议叫 '+fmt(best)+'，预期罚杯 '+cups(best.immediateOpenLoss):'建议普通开上家，预期罚杯 '+cups(a.openLoss))+'。'+(phase==='opening'?'':'若数值相等，两者并列。')+'</p>';
- }else html+='<p class="decision">最稳的新叫法：'+fmt(best)+'，成立概率 '+pct(best.pTrue)+'。'+(phase==='opening'?'':'现在普通开自己的预期罚杯是 '+cups(a.openLoss)+'；未知下家行为，无法据此保证继续叫更优。')+'</p>';
- html+='<div class="table-wrap"><table><thead><tr><th>叫法</th><th>成立概率</th><th>立即被开时喝的概率</th><th>该情景平均罚杯</th>'+(phase==='opening'?'<th>选作首叫</th>':'')+'</tr></thead><tbody>'+top.map(x=>'<tr><td>'+fmt(x)+'</td><td>'+pct(x.pTrue)+'</td><td>'+pct(x.pFalse)+'</td><td>'+cups(x.immediateOpenLoss)+'</td>'+(phase==='opening'?'<td><button type="button" data-pick="'+x.bid.quantity+','+x.bid.face+'">选定</button></td>':'')+'</tr>').join('')+'</tbody></table></div>';
- }else html+='<p>当前条件下没有可叫的'+(filter==='zhai'?'斋':filter==='fly'?'飞':'更大叫法')+'。'+(filter==='zhai'&&phase!=='opening'&&a.mode==='fly'?'上家已进入飞，按房规不能退斋。':'请检查人数、上家叫法或切换推荐范围。')+'</p>';
- }
- section.innerHTML=html;$('results').appendChild(section);section.querySelectorAll('[data-pick]').forEach(button=>button.addEventListener('click',()=>{const [q,f]=button.dataset.pick.split(',').map(Number);$('quantity').value=String(q);$('face').value=String(f);$('bid-mode').value=E.mode({quantity:q,face:f});modeHint();compute();$('bid-fields').scrollIntoView({behavior:'smooth',block:'center'});}));
- }catch(err){$('error').textContent=err.message;}
+</script><script>'use strict';
+const $=id=>document.getElementById(id),E=DiceAdvisor;
+const fmt=a=>a.bid.quantity+'个'+a.bid.face+'，'+(a.mode==='fly'?'飞':'斋');
+function percent(p,zero=false,one=false){if(zero)return '0%';if(one)return '100%';if(p<.0001)return '＜0.01%';if(p>.9999)return '＞99.99%';return (p*100).toFixed(2)+'%';}
+function chance(a,truth=true){return percent(truth?a.pTrue:a.pFalse,truth?a.certainFalse:a.certainTrue,truth?a.certainTrue:a.certainFalse);}
+function cups(x){return x>0&&x<.0001?'＜0.0001杯':x.toFixed(4)+'杯';}
+for(let i=0;i<5;i++){
+  const s=document.createElement('select');s.id='die'+i;s.setAttribute('aria-label','第'+(i+1)+'颗骰子');
+  s.add(new Option('—',''));for(let f=1;f<=6;f++)s.add(new Option(String(f),String(f)));$('dice').appendChild(s);
 }
-$('form').addEventListener('submit',ev=>{ev.preventDefault();compute();});stage();compute();
+for(let f=1;f<=6;f++)$('face').add(new Option(String(f),String(f)));
+try{const saved=JSON.parse(localStorage.getItem('five-dice-settings-v12')||'null');if(saved){if(saved.players>=2&&saved.players<=20)$('players').value=String(saved.players);if(['cups','win'].includes(saved.objective))$('objective').value=saved.objective;}}catch(_){}
+const getRules=()=>({straight:$('straight').value,bonus:$('bonus').checked});
+function markDirty(){
+  const computed=$('results').dataset.computed==='true';
+  if(computed){$('results').innerHTML='';$('results').dataset.computed='false';$('stale').hidden=false;}
+  $('error').textContent='';
+}
+function modeHint(){
+  const n=Number($('players').value),face=Number($('face').value),q=Number($('quantity').value);
+  if(!Number.isInteger(n)||n<2||n>20){$('mode-hint').textContent='人数含自己，支持2–20人。';return;}
+  const base=n<=4?'本局非1点数：斋可叫'+(n===4?'5':(n+1)+'–5')+'个，飞从6个起。':'本局非1点数没有合法的斋，飞从6个起。';
+  $('mode-hint').textContent=base+'叫1恒斋，至少'+(n+1)+'个。'+(face&&q?'你填的叫法按房规属于'+(E.mode({quantity:q,face})==='fly'?'飞。':'斋。'):'');
+}
+function stage(){
+  const phase=$('phase').value,opening=phase==='opening';
+  $('opening-check').hidden=!opening;
+  if(opening)$('opening-check').appendChild($('bid-fields'));else $('opening-check').after($('bid-fields'));
+  $('bid-label').textContent=opening?'我准备首叫的数量':phase==='defend'?'我刚叫的数量':'上家叫的数量';
+  $('signal-fields').hidden=phase!=='respond';modeHint();
+}
+function table(rows,headers){return '<div class="table-wrap"><table><thead><tr>'+headers.map(x=>'<th scope="col">'+x+'</th>').join('')+'</tr></thead><tbody>'+rows.map(x=>'<tr>'+x.map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';}
+function decision(phase,a,best,objective,surrender,signal){
+  const d=E.decide(phase,a,best,objective,surrender),target=objective==='cups'?'平均少喝':'本次开盅少输';
+  let title='',body='';
+  if(d.action==='raise'){
+    title=(phase==='opening'?'模型推荐首叫：':'一轮建议：继续叫 ')+fmt(best);
+    body='这句成立概率 '+chance(best)+'；你的手牌能算 '+best.own+' 个。';
+    body+='下家立即普通开你：喝的概率 '+chance(best,false)+'，平均 '+cups(best.immediateOpenLoss)+'；若立即批你、你接受：平均 '+cups(best.acceptPiLoss)+'。';
+    if(phase==='respond')body+='作为对照，现在普通开上家平均 '+cups(a.openLoss)+'。';
+  }else if(d.action==='open'){
+    title=d.tie?'一轮比较打平：可普通开上家':'一轮建议：普通开上家';
+    body='开上家时，你喝半杯的概率是 '+chance(a)+'，平均 '+cups(a.openLoss)+'。';
+    if(best)body+='继续叫 '+fmt(best)+' 的输局概率是 '+chance(best,false)+'；若被立即批且接受，平均 '+cups(best.acceptPiLoss)+'。';
+  }else if(d.action==='surrender'){
+    title='按平均少喝：直接认输半杯';body='认输一定喝半杯；接受批则有 '+chance(a,false)+' 的概率喝1杯，平均 '+cups(a.acceptPiLoss)+'。这是降低平均杯数，不能提高这次不喝的概率。';
+  }else if(d.action==='accept'){
+    title=d.tie?'平均罚杯相同：可接受批、开盅':'建议接受批，直接开盅';
+    body='你的叫法成立概率 '+chance(a)+'；不成立时喝1杯，平均 '+cups(a.acceptPiLoss)+'。反批的输局概率相同，输时改喝2杯。';
+  }
+  const scope=phase==='defend'?'本次已被批，接受后直接开盅。反批不改变叫法真假。':'比较范围：下家立刻开你，或批你且你接受批。“平均少喝”按其中较高罚杯比较；下家继续叫的后续尚未计算。';
+  return '<div class="decision" id="main-advice"><span class="tag">目标：'+target+(signal?' · 含上家贡献假设':' · 只知道自己手牌')+'</span><h2>'+title+'</h2><p>'+body+'</p><small>'+scope+'</small></div>';
+}
+function compute(){
+  $('error').textContent='';$('results').innerHTML='';$('results').dataset.computed='false';$('stale').hidden=true;
+  try{
+    const values=Array.from({length:5},(_,i)=>$('die'+i).value);
+    if(values.some(x=>x===''))throw Error('先选完你的五颗骰子；示例只能用来体验，实际使用要填真实手牌。');
+    const h=values.map(Number),n=Number($('players').value),r=getRules(),phase=$('phase').value,objective=$('objective').value,surrender=$('surrender').checked;
+    E.hand(h);if(!Number.isInteger(n)||n<2||n>20)throw Error('总人数含自己，请填2–20的整数。');
+    if(E.rejected(h,r))throw Error('这手五颗互不相同，按当前顺子规则应重摇。请输入重摇后的最终手牌。');
+    const hasBid=$('quantity').value!==''||$('face').value!=='';
+    let b=null,a=null,signal=null,prior=null;
+    if(phase!=='opening'||$('opening-check').open&&hasBid){
+      if(!$('quantity').value||!$('face').value)throw Error('请填全当前叫法：数量和目标点数。');
+      b={quantity:Number($('quantity').value),face:Number($('face').value),declaredMode:$('bid-mode').value};
+      prior=E.analyze(h,n,b,r);
+      const min=Number($('signal-min').value);
+      if(phase==='respond'&&min>0)signal={face:b.face,fly:E.mode(b)==='fly',min};
+      a=signal?E.analyze(h,n,b,r,signal):prior;
+    }
+    const choices=phase==='defend'?[]:E.raises(h,n,phase==='respond'?b:null,r,signal),best=choices[0];
+    let html=decision(phase,a,best,objective,surrender,signal),shown=a||best;
+    if(signal){
+      const probability=Number(a.conditionedAccepted)/Number(a.accepted);
+      html+='<div class="notice"><strong>当前使用假设：上家对原叫法至少贡献'+signal.min+'个。</strong><p>不加假设时，原叫法成立概率 '+chance(prior)+'；加假设后 '+chance(a)+'。公平摇骰时，符合假设的上家手牌占 '+percent(probability)+'。'+(probability<.05?'这个假设筛掉了超过95%的手牌，结论高度依赖你的判断。':'')+'这不是已经知道他的骰子。</p></div>';
+      if(phase==='respond'){
+        const baseChoices=E.raises(h,n,b,r),baseDecision=E.decide(phase,prior,baseChoices[0],objective,surrender),signalDecision=E.decide(phase,a,best,objective,surrender);
+        if(baseDecision.action!==signalDecision.action||baseDecision.best&&signalDecision.best&&fmt(baseDecision.best)!==fmt(signalDecision.best))html+='<p class="notice">开启线索改变了建议；请先确认这项假设有依据。没有把握时关闭线索，按基础模型查看。</p>';
+      }
+    }
+    html+='<h2>'+(a?(phase==='respond'?'上家叫法：':phase==='defend'?'我刚叫的：':'正在检查的首叫：'):'推荐首叫详情：')+fmt(shown)+'</h2><div class="stats"><div class="stat">叫法成立概率<strong class="value">'+chance(shown)+'</strong></div><div class="stat">叫法不成立概率<strong class="value">'+chance(shown,false)+'</strong></div><div class="stat">你的手牌能算<strong class="value">'+shown.own+'个</strong></div></div>';
+    if(shown.certainTrue||shown.certainFalse)html+='<p class="notice">'+(signal?'在上述假设与房规下：':'在当前房规和已知手牌下：')+(shown.certainTrue?'这句在数学上必定成立。':'这句在数学上不可能成立。')+'</p>';
+    html+='<p class="muted">全场该目标的有效数量：平均约 '+shown.mean.toFixed(2)+' 个；模型中央90%区间 '+shown.interval[0]+'–'+shown.interval[1]+' 个（离散分布，覆盖率至少90%）。</p>';
+    if(phase==='respond'){
+      html+='<details><summary>展开看：开和批的差别</summary>'+table([
+        ['普通开上家','喝半杯',chance(a),cups(a.openLoss)],
+        ['批上家；对方接受','喝1杯',chance(a),cups(a.piLoss)],
+        ['批上家；对方反批','喝2杯',chance(a),cups(2*a.piLoss)]
+      ],['结算方式','输时罚杯','本模型输局概率','每种固定结算方式下的平均罚杯'])+'<p><small>批不会改变当前叫法真假。以上将结算方式视为固定情景；对方按手牌选择反批会带来额外信息。'+(surrender?'认输房规已开启，批也可能使对方认输；未建模这种行为，不能断言批一定更差。':'在不计威慑和后续收益、对方没有认输选项时，单看自己罚杯，普通开不高于批。')+'</small></p></details>';
+    }else if(phase==='defend'){
+      html+='<h3>被批后，自己承担多少风险？</h3>'+table([
+        ['接受批，开盅',chance(a,false),cups(a.acceptPiLoss)],
+        ['反批，开盅',chance(a,false),cups(a.counterLoss)]
+      ].concat(surrender?[['直接认输','100%','0.5000杯']]:[]),['动作','自己喝的概率','平均罚杯']);
+    }
+    if(phase!=='defend'){
+      const filter=$('recommend-mode').value,top=choices.filter(x=>filter==='all'||x.mode===filter).slice(0,5);
+      html+='<h3>其他合法叫法 · '+(filter==='zhai'?'只看斋':filter==='fly'?'只看飞':'按成立概率排序')+'</h3><p><small>主建议始终比较全部合法叫法；筛选只改变下表。相同概率优先较小数量、较低点数，不代表心理博弈最优。</small></p>';
+      if(top.length)html+=table(top.map(x=>[
+        '<strong>'+fmt(x)+'</strong>',chance(x),chance(x,false),cups(x.immediateOpenLoss)+' / '+cups(x.acceptPiLoss),'<button type="button" data-pick="'+x.bid.quantity+','+x.bid.face+'">'+(phase==='opening'?'检查首叫':'查看这句')+'</button>'
+      ]),['可以叫什么','成立概率','被立即质疑时输局概率','立即被开 / 被批且接受的平均罚杯','查看']);
+      else html+='<p>这个筛选下没有合法叫法。'+(a&&a.mode==='fly'&&filter==='zhai'?'已进入飞，不能退斋。':'请改为“全部合法叫法”，或核对人数。')+'</p>';
+    }
+    html+='<details><summary>查看精确计数与计算依据</summary><p style="overflow-wrap:anywhere">P(成立) = '+shown.numerator+' / '+shown.denominator+'；未知玩家每人基础有效手牌 '+shown.accepted+' 种。'+(signal?'其中指定上家筛选后保留 '+shown.conditionedAccepted+' 种。':'')+'</p><p>0%和100%只在整数计数确实为0或全部时显示。接近边界但仍有风险时显示“＜0.01%”或“＞99.99%”。</p></details>';
+    const section=document.createElement('section');section.className='panel';section.innerHTML=html;$('results').appendChild(section);$('results').dataset.computed='true';
+    section.querySelectorAll('[data-pick]').forEach(button=>button.addEventListener('click',()=>{
+      const [q,f]=button.dataset.pick.split(',').map(Number),picked=choices.find(x=>x.bid.quantity===q&&x.bid.face===f);
+      if(phase==='opening'){
+        $('quantity').value=String(q);$('face').value=String(f);$('bid-mode').value=picked.mode;$('opening-check').open=true;modeHint();compute();
+      }else{
+        let info=$('candidate-preview');if(!info){info=document.createElement('div');info.id='candidate-preview';info.className='notice';$('results').prepend(info);}
+        info.textContent='可叫：'+fmt(picked)+'。成立 '+chance(picked)+'；下家普通开你时平均 '+cups(picked.immediateOpenLoss)+'，批你且你接受时平均 '+cups(picked.acceptPiLoss)+'。已保留原上家输入，不会把新叫法误当作上家叫法。';
+      }
+    }));
+    try{localStorage.setItem('five-dice-settings-v12',JSON.stringify({players:n,objective}));}catch(_){}
+  }catch(err){$('error').textContent=err.message;}
+}
+for(const event of ['input','change'])$('form').addEventListener(event,ev=>{if(ev.target.matches('input,select')){markDirty();modeHint();}});
+$('phase').addEventListener('change',()=>{$('signal-min').value='0';$('quantity').value='';$('face').value='';$('bid-mode').value='auto';$('opening-check').open=false;stage();});
+$('form').addEventListener('submit',ev=>{ev.preventDefault();compute();});
+$('example').addEventListener('click',()=>{
+  [1,3,3,5,6].forEach((v,i)=>$('die'+i).value=String(v));$('players').value='4';$('phase').value='respond';$('quantity').value='6';$('face').value='3';$('bid-mode').value='auto';$('recommend-mode').value='all';$('objective').value='cups';$('straight').value='distinct';$('bonus').checked=true;$('surrender').checked=false;$('signal-min').value='0';$('example-note').hidden=false;stage();compute();
+});
+$('new-hand').addEventListener('click',()=>{
+  for(let i=0;i<5;i++)$('die'+i).value='';$('quantity').value='';$('face').value='';$('bid-mode').value='auto';$('signal-min').value='0';$('example-note').hidden=true;markDirty();modeHint();$('die0').focus();
+});
+stage();
 </script></body></html>
